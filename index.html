@@ -4,15 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense & Budget Visualizer</title>
-    <!-- Memanggil CSS sesuai folder Rules (huruf kecil) -->
-    <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { 
+            --bg: #f4f6f9; 
+            --card: #ffffff; 
+            --text: #333333; 
+            --border: #e0e0e0; 
+        }
+
+        .dark-mode { 
+            --bg: #121212; 
+            --card: #1e1e1e; 
+            --text: #ffffff; 
+            --border: #333333; 
+        }
+
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            font-family: Arial, sans-serif; 
+            margin: 0;
+            padding: 20px;
+            transition: 0.3s; 
+        }
+
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px;
+        }
+
+        .balance-card, .form-section, .list-section, .chart-section { 
+            background: var(--card); 
+            padding: 20px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border);
+            margin-bottom: 20px; 
+        }
+
+        .balance-card { text-align: center; }
+        .balance-card h3 { margin: 0; color: #888; font-size: 0.9rem; }
+        #total-balance { font-size: 2rem; font-weight: bold; color: #2196f3; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
+
+        input, select, button { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box;
+            border: 1px solid var(--border); 
+            border-radius: 4px; 
+            background: var(--card);
+            color: var(--text);
+        }
+
+        #add-btn { 
+            background: #2196f3; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold;
+        }
+
+        .main-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+        }
+
+        .list-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 15px; 
+        }
+
+        .list-header select { width: auto; }
+
+        .transaction-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px; 
+            border-bottom: 1px solid var(--border); 
+        }
+
+        .item-info { display: flex; flex-direction: column; }
+        .item-title { font-weight: bold; }
+        .item-amount { color: #2196f3; }
+        .item-category { font-size: 0.8rem; color: #777; }
+
+        .over-limit { 
+            background-color: #ffe6e6; 
+            border-left: 4px solid #ff4d4d; 
+        }
+        .dark-mode .over-limit {
+            background-color: #4a1515;
+        }
+
+        .btn-delete { 
+            background: #ff4d4d; 
+            color: white; 
+            border: none; 
+            width: auto; 
+            padding: 6px 12px; 
+            cursor: pointer; 
+        }
+
+        .chart-container { 
+            position: relative; 
+            height: 250px; 
+        }
+
+        @media (max-width: 600px) { 
+            .main-grid { grid-template-columns: 1fr; } 
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Expense & Budget Visualizer</h1>
-            <!-- Optional Challenge 1: Dark Mode Toggle -->
             <button id="theme-toggle">🌙 Dark Mode</button>
         </header>
 
@@ -48,7 +168,6 @@
             <section class="list-section">
                 <div class="list-header">
                     <h2>Transactions</h2>
-                    <!-- Optional Challenge 2: Sort Transactions -->
                     <select id="sort-select">
                         <option value="newest">Newest First</option>
                         <option value="high-amount">Highest Amount</option>
@@ -67,7 +186,112 @@
         </div>
     </div>
 
-    <!-- Memanggil JS sesuai folder Rules (huruf kecil) -->
-    <script src="js/script.js"></script>
+    <script>
+        const SPENDING_LIMIT = 50;
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        let myChart = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            updateUI();
+
+            document.getElementById('transaction-form').addEventListener('submit', addTransaction);
+            document.getElementById('sort-select').addEventListener('change', updateUI);
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+        });
+
+        function addTransaction(e) {
+            e.preventDefault();
+            const name = document.getElementById('item-name').value.trim();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const category = document.getElementById('category').value;
+
+            if (!name || isNaN(amount) || amount <= 0) return;
+
+            transactions.push({ id: Date.now(), name, amount, category });
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            
+            document.getElementById('transaction-form').reset();
+            updateUI();
+        }
+
+        function deleteTransaction(id) {
+            transactions = transactions.filter(t => t.id !== id);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            updateUI();
+        }
+
+        function updateUI() {
+            const total = transactions.reduce((sum, t) => sum + t.amount, 0);
+            document.getElementById('total-balance').textContent = `$${total.toFixed(2)}`;
+
+            const listEl = document.getElementById('transaction-list');
+            listEl.innerHTML = '';
+
+            let sorted = [...transactions];
+            const sortBy = document.getElementById('sort-select').value;
+
+            if (sortBy === 'high-amount') sorted.sort((a, b) => b.amount - a.amount);
+            if (sortBy === 'low-amount') sorted.sort((a, b) => a.amount - b.amount);
+            if (sortBy === 'newest') sorted.sort((a, b) => b.id - a.id);
+
+            sorted.forEach(t => {
+                const item = document.createElement('div');
+                item.className = `transaction-item ${t.amount >= SPENDING_LIMIT ? 'over-limit' : ''}`;
+                item.innerHTML = `
+                    <div class="item-info">
+                        <span class="item-title">${t.name}</span>
+                        <span class="item-amount">$${t.amount.toFixed(2)}</span>
+                        <span class="item-category">${t.category}</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTransaction(${t.id})">Delete</button>
+                `;
+                listEl.appendChild(item);
+            });
+
+            renderChart();
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('expense-chart').getContext('2d');
+            if (myChart) myChart.destroy();
+
+            const categories = ['Food', 'Transport', 'Fun'];
+            const dataSums = categories.map(cat => 
+                transactions
+                    .filter(t => t.category === cat)
+                    .reduce((sum, t) => sum + t.amount, 0)
+            );
+
+            myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: dataSums,
+                        backgroundColor: ['#4caf50', '#2196f3', '#ff9800']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-toggle').textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+        }
+
+        function initTheme() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-toggle').textContent = '☀️ Light Mode';
+            }
+        }
+    </script>
 </body>
 </html>
