@@ -1,7 +1,6 @@
-// Limit nominal untuk highlight transaksi tinggi (Challenge 2)
+// Challenge 2: Batas nominal untuk highlight ($50.00 ke atas)
 const SPENDING_LIMIT = 50.00;
 
-// State Data
 let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 let chartInstance = null;
 
@@ -15,16 +14,16 @@ const transactionListEl = document.getElementById('transaction-list');
 const sortSelect = document.getElementById('sort-select');
 const themeToggleBtn = document.getElementById('theme-toggle');
 
-// Init App
+// Initialize App
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     updateUI();
 });
 
 // Event Listeners
-form.addEventListener('submit', addTransaction);
-sortSelect.addEventListener('change', updateUI);
-themeToggleBtn.addEventListener('click', toggleTheme);
+if (form) form.addEventListener('submit', addTransaction);
+if (sortSelect) sortSelect.addEventListener('change', updateUI);
+if (themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
 
 // Add New Transaction
 function addTransaction(e) {
@@ -35,7 +34,7 @@ function addTransaction(e) {
     const category = categoryInput.value;
 
     if (!name || isNaN(amount) || amount <= 0 || !category) {
-        alert('Please fill all fields correctly.');
+        alert('Please fill out all fields correctly.');
         return;
     }
 
@@ -50,7 +49,6 @@ function addTransaction(e) {
     saveData();
     updateUI();
 
-    // Reset Form
     form.reset();
 }
 
@@ -61,19 +59,19 @@ function deleteTransaction(id) {
     updateUI();
 }
 
-// Save to LocalStorage
+// Save Data to LocalStorage
 function saveData() {
     localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
-// Update Interface (Balance, List, Chart)
+// Update UI Components
 function updateUI() {
     renderBalance();
     renderList();
     renderChart();
 }
 
-// Render Total Balance
+// Render Balance Total
 function renderBalance() {
     const total = transactions.reduce((acc, curr) => acc + curr.amount, 0);
     totalBalanceEl.textContent = `$${total.toFixed(2)}`;
@@ -83,24 +81,26 @@ function renderBalance() {
 function renderList() {
     transactionListEl.innerHTML = '';
 
-    const sorted = [...transactions];
-    const sortValue = sortSelect.value;
+    let sorted = [...transactions];
+    const sortValue = sortSelect ? sortSelect.value : 'newest';
 
+    // Challenge 1: Sorting Logic
     if (sortValue === 'high-amount') {
         sorted.sort((a, b) => b.amount - a.amount);
     } else if (sortValue === 'low-amount') {
         sorted.sort((a, b) => a.amount - b.amount);
     } else {
-        sorted.sort((a, b) => b.id - a.id); // Newest first
+        sorted.sort((a, b) => b.id - a.id); // Newest
     }
 
     if (sorted.length === 0) {
-        transactionListEl.innerHTML = '<p style="text-align:center; color: var(--text-muted);">No transactions added yet.</p>';
+        transactionListEl.innerHTML = '<p style="text-align:center; color: var(--text-muted); margin-top: 10px;">No transactions added yet.</p>';
         return;
     }
 
     sorted.forEach(t => {
         const item = document.createElement('div');
+        // Challenge 2: Highlight class
         item.className = `transaction-item ${t.amount >= SPENDING_LIMIT ? 'over-limit' : ''}`;
         
         item.innerHTML = `
@@ -109,23 +109,30 @@ function renderList() {
                 <span class="item-amount">$${t.amount.toFixed(2)}</span>
                 <span class="item-category">${t.category}</span>
             </div>
-            <button class="btn-delete" onclick="deleteTransaction(${t.id})">Delete</button>
+            <button class="btn-delete">Delete</button>
         `;
-        
+
+        item.querySelector('.btn-delete').addEventListener('click', () => {
+            deleteTransaction(t.id);
+        });
+
         transactionListEl.appendChild(item);
     });
 }
 
-// Render Category Pie Chart
+// Render Chart.js Pie Chart
 function renderChart() {
+    const canvas = document.getElementById('expense-chart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
     const categories = ['Food', 'Transport', 'Fun'];
+    
     const dataSums = categories.map(cat => {
         return transactions
             .filter(t => t.category === cat)
             .reduce((sum, t) => sum + t.amount, 0);
     });
-
-    const ctx = document.getElementById('expense-chart').getContext('2d');
 
     if (chartInstance) {
         chartInstance.destroy();
@@ -143,6 +150,7 @@ function renderChart() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: true,
             plugins: {
                 legend: {
                     position: 'bottom'
@@ -152,18 +160,20 @@ function renderChart() {
     });
 }
 
-// Challenge 3: Dark/Light Mode Switch
+// Challenge 3: Dark Mode Toggle
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    themeToggleBtn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+    if (themeToggleBtn) {
+        themeToggleBtn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
 }
 
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
-        themeToggleBtn.textContent = '☀️ Light Mode';
+        if (themeToggleBtn) themeToggleBtn.textContent = '☀️ Light Mode';
     }
 }

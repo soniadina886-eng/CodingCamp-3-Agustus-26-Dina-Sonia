@@ -182,7 +182,6 @@ button {
     padding: 12px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    transition: background-color 0.2s;
 }
 
 /* Challenge 2: Highlight Over Limit */

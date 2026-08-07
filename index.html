@@ -4,18 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense & Budget Visualizer</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!-- Chart.js CDN -->
+    <!-- Jalur CSS disesuaikan ke folder CSS (huruf besar) -->
+    <link rel="stylesheet" href="CSS/style.css">
+    <!-- CDN Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Expense & Budget Visualizer</h1>
+            <!-- Challenge 3: Dark Mode Toggle Button -->
             <button id="theme-toggle" class="btn-secondary">🌙 Dark Mode</button>
         </header>
 
-        <!-- Balance Card -->
+        <!-- Total Balance Display -->
         <div class="balance-card">
             <h3>TOTAL BALANCE</h3>
             <div id="total-balance" class="balance-amount">$0.00</div>
@@ -45,13 +47,13 @@
             </form>
         </section>
 
-        <!-- Main Content Grid -->
+        <!-- Main Content Layout -->
         <div class="main-grid">
             <!-- Transactions List Section -->
             <section class="list-section">
                 <div class="list-header">
                     <h2>Transactions</h2>
-                    <!-- Challenge 1: Sorting -->
+                    <!-- Challenge 1: Sorting Dropdown -->
                     <select id="sort-select">
                         <option value="newest">Newest First</option>
                         <option value="high-amount">Highest Amount</option>
@@ -60,7 +62,7 @@
                 </div>
                 
                 <div id="transaction-list" class="transaction-list">
-                    <!-- Dynamic items inserted here -->
+                    <!-- Dynamic transaction items inserted here -->
                 </div>
             </section>
 
@@ -74,6 +76,7 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <!-- Jalur JS disesuaikan ke folder JS (huruf besar) -->
+    <script src="JS/script.js"></script>
 </body>
 </html>
