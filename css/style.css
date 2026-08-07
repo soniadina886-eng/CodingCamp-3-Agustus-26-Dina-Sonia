@@ -1,0 +1,122 @@
+:root { 
+    --bg: #f4f6f9; 
+    --card: #ffffff; 
+    --text: #333333; 
+    --border: #e0e0e0; 
+}
+
+.dark-mode { 
+    --bg: #121212; 
+    --card: #1e1e1e; 
+    --text: #ffffff; 
+    --border: #333333; 
+}
+
+body { 
+    background-color: var(--bg); 
+    color: var(--text); 
+    font-family: Arial, sans-serif; 
+    margin: 0;
+    padding: 20px;
+    transition: 0.3s; 
+}
+
+.container { 
+    max-width: 800px; 
+    margin: 0 auto; 
+}
+
+header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px;
+}
+
+.balance-card, .form-section, .list-section, .chart-section { 
+    background: var(--card); 
+    padding: 20px; 
+    border-radius: 8px; 
+    border: 1px solid var(--border);
+    margin-bottom: 20px; 
+}
+
+.balance-card { text-align: center; }
+.balance-card h3 { margin: 0; color: #888; font-size: 0.9rem; }
+#total-balance { font-size: 2rem; font-weight: bold; color: #2196f3; }
+
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
+
+input, select, button { 
+    width: 100%; 
+    padding: 10px; 
+    box-sizing: border-box;
+    border: 1px solid var(--border); 
+    border-radius: 4px; 
+    background: var(--card);
+    color: var(--text);
+}
+
+#add-btn { 
+    background: #2196f3; 
+    color: white; 
+    border: none; 
+    cursor: pointer; 
+    font-weight: bold;
+}
+
+.main-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px; 
+}
+
+.list-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 15px; 
+}
+
+.list-header select { width: auto; }
+
+.transaction-item { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px; 
+    border-bottom: 1px solid var(--border); 
+}
+
+.item-info { display: flex; flex-direction: column; }
+.item-title { font-weight: bold; }
+.item-amount { color: #2196f3; }
+.item-category { font-size: 0.8rem; color: #777; }
+
+/* Optional Challenge 3: Highlight spending over set limit ($50) */
+.over-limit { 
+    background-color: #ffe6e6; 
+    border-left: 4px solid #ff4d4d; 
+}
+.dark-mode .over-limit {
+    background-color: #4a1515;
+}
+
+.btn-delete { 
+    background: #ff4d4d; 
+    color: white; 
+    border: none; 
+    width: auto; 
+    padding: 6px 12px; 
+    cursor: pointer; 
+}
+
+.chart-container { 
+    position: relative; 
+    height: 250px; 
+}
+
+@media (max-width: 600px) { 
+    .main-grid { grid-template-columns: 1fr; } 
+}
