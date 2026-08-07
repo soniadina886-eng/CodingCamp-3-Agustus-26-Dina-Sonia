@@ -1,218 +1,122 @@
-:root {
-    --bg-color: #f4f6f9;
-    --card-bg: #ffffff;
-    --text-color: #333333;
-    --text-muted: #666666;
-    --border-color: #e0e0e0;
-    --primary-color: #1a73e8;
-    --danger-color: #d9534f;
-    --highlight-bg: #ffe6e6;
-    --highlight-border: #d9534f;
+:root { 
+    --bg: #f4f6f9; 
+    --card: #ffffff; 
+    --text: #333333; 
+    --border: #e0e0e0; 
 }
 
-body.dark-mode {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --text-color: #e0e0e0;
-    --text-muted: #a0a0a0;
-    --border-color: #333333;
-    --primary-color: #4285f4;
-    --highlight-bg: #3c1e1e;
-    --highlight-border: #ff6b6b;
+.dark-mode { 
+    --bg: #121212; 
+    --card: #1e1e1e; 
+    --text: #ffffff; 
+    --border: #333333; 
 }
 
-* {
-    box-sizing: border-box;
+body { 
+    background-color: var(--bg); 
+    color: var(--text); 
+    font-family: Arial, sans-serif; 
     margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
     padding: 20px;
-    transition: background-color 0.3s, color 0.3s;
+    transition: 0.3s; 
 }
 
-.container {
-    max-width: 900px;
-    margin: 0 auto;
+.container { 
+    max-width: 800px; 
+    margin: 0 auto; 
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
     margin-bottom: 20px;
 }
 
-h1 {
-    font-size: 1.8rem;
+.balance-card, .form-section, .list-section, .chart-section { 
+    background: var(--card); 
+    padding: 20px; 
+    border-radius: 8px; 
+    border: 1px solid var(--border);
+    margin-bottom: 20px; 
 }
 
-.balance-card {
-    background-color: var(--card-bg);
-    padding: 24px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    margin-bottom: 24px;
+.balance-card { text-align: center; }
+.balance-card h3 { margin: 0; color: #888; font-size: 0.9rem; }
+#total-balance { font-size: 2rem; font-weight: bold; color: #2196f3; }
+
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
+
+input, select, button { 
+    width: 100%; 
+    padding: 10px; 
+    box-sizing: border-box;
+    border: 1px solid var(--border); 
+    border-radius: 4px; 
+    background: var(--card);
+    color: var(--text);
 }
 
-.balance-card h3 {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-}
-
-.balance-amount {
-    font-size: 2.5rem;
+#add-btn { 
+    background: #2196f3; 
+    color: white; 
+    border: none; 
+    cursor: pointer; 
     font-weight: bold;
-    color: var(--primary-color);
 }
 
-.form-section {
-    background-color: var(--card-bg);
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+.main-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px; 
 }
 
-.form-section h2 {
-    font-size: 1.2rem;
-    margin-bottom: 16px;
+.list-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 15px; 
 }
 
-.form-group {
-    margin-bottom: 12px;
+.list-header select { width: auto; }
+
+.transaction-item { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px; 
+    border-bottom: 1px solid var(--border); 
 }
 
-.form-group label {
-    display: block;
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-    color: var(--text-muted);
+.item-info { display: flex; flex-direction: column; }
+.item-title { font-weight: bold; }
+.item-amount { color: #2196f3; }
+.item-category { font-size: 0.8rem; color: #777; }
+
+/* Optional Challenge 3: Highlight spending over set limit ($50) */
+.over-limit { 
+    background-color: #ffe6e6; 
+    border-left: 4px solid #ff4d4d; 
+}
+.dark-mode .over-limit {
+    background-color: #4a1515;
 }
 
-input, select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    font-size: 1rem;
+.btn-delete { 
+    background: #ff4d4d; 
+    color: white; 
+    border: none; 
+    width: auto; 
+    padding: 6px 12px; 
+    cursor: pointer; 
 }
 
-button {
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    font-weight: 600;
+.chart-container { 
+    position: relative; 
+    height: 250px; 
 }
 
-.btn-primary {
-    width: 100%;
-    padding: 12px;
-    background-color: var(--primary-color);
-    color: white;
-    font-size: 1rem;
-    margin-top: 8px;
-}
-
-.btn-secondary {
-    padding: 8px 16px;
-    background-color: var(--border-color);
-    color: var(--text-color);
-}
-
-.btn-delete {
-    background-color: var(--danger-color);
-    color: white;
-    padding: 8px 12px;
-}
-
-.main-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
-}
-
-@media (min-width: 768px) {
-    .main-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-.list-section, .chart-section {
-    background-color: var(--card-bg);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-#sort-select {
-    width: auto;
-    padding: 4px 8px;
-    font-size: 0.85rem;
-}
-
-.transaction-list {
-    max-height: 350px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.transaction-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-}
-
-/* Challenge 2: Highlight Over Limit */
-.transaction-item.over-limit {
-    background-color: var(--highlight-bg);
-    border-color: var(--highlight-border);
-}
-
-.item-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.item-title {
-    font-weight: bold;
-    font-size: 1rem;
-}
-
-.item-amount {
-    color: var(--primary-color);
-    font-size: 0.95rem;
-    margin: 2px 0;
-}
-
-.item-category {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.chart-container {
-    position: relative;
-    max-width: 300px;
-    margin: 0 auto;
+@media (max-width: 600px) { 
+    .main-grid { grid-template-columns: 1fr; } 
 }
